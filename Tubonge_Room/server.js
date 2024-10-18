@@ -1,7 +1,8 @@
 var http = require('http');
 const fs = require('fs');
 var path = require('path');
-const mime = require('mime-types')
+const mime = require('mime-types');
+var chatServer = require('./lib/chat_server');
 var cache = {};
 
 // sending file data and error Response
@@ -57,3 +58,6 @@ var server = http.createServer(function(request, response){
 server.listen(3955, function(){
     console.log(`Server listen on port 3955`)
 });
+
+// setting up Socket.io server
+chatServer.listen(server);

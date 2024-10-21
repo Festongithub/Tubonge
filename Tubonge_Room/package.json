@@ -1,6 +1,16 @@
 {
+  "name": "tubonge_room",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "devstart": "nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "mime-types": "^2.1.35",
     "socket.io": "^4.8.0"
   }
 }

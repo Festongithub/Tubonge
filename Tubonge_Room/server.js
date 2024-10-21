@@ -1,63 +1,40 @@
 var http = require('http');
-const fs = require('fs');
-var path = require('path');
-const mime = require('mime-types');
-var chatServer = require('./lib/chat_server');
-var cache = {};
+var url = require('url');
+var fs = require('fs');
 
-// sending file data and error Response
-
-function send404(response) {
-    response.writeHead(404, {'Content-Type': 'text/plain'});
-    response.write('Error 404: resource not found');
-    response.end();
-}
-
-// sendfiles over the server
-function sendFile(response, filePath, fileContents) {
-    response.writeHead(
-        200,
-        {"content-type": mime.lookup(path.basename(filePath))}
-    );
-    response.end(fileContents);
-}
-
-function serveStatic(response, cache, absPath) {
-    if(cache[absPath]){
-        sendFile(response, absPath, cache[absPath]);
-    } else {
-        fs.exists(absPath, function(exists){
-            if(exists) {
-                fs.readFile(absPath, function(err, data){
-                    if(err){
-                        send404(response);
-                    } else {
-                        cache[absPath] = data;
-                        sendFile(response, absPath, data);
-                    }
-                });
+// create server 
+var server = http.createServer(function(req, res){
+    var parsedUrl = url.parse(req.url,true);
+    switch (parsedUrl.pathname) {
+        case '/':
+        fs.readFile('index.html', function(err, content){
+            if(err) {
+                res.writeHead(500);
+                res.end();
             } else {
-                send404(response);
+                res.writeHead(200, { 'Content-Type': 'text/html'});
+                res.end(content, 'utf-8');
             }
-        })
+        });
+        break;
     }
-}
-
-var server = http.createServer(function(request, response){
-    var filePath = false;
-
-    if(request.url == '/'){
-        filePath = 'public/index.html';
-    } else {
-        filePath = 'public' + request.url;
-    }
-    var absPath = './' + filePath;
-    serveStatic(response, cache, absPath);
 });
 
-server.listen(3955, function(){
-    console.log(`Server listen on port 3955`)
+// connect the websocket handler to our server
+var websocket = require('socket.io')(server);
+
+// handler creation for incoming websocket connections
+websocket.on('UserConnectedEvent', function(socket){
+    console.log('New user connected');
+
+    // inform other users of  new user connected
+    socket.broadcast.emit('UserConnectedEvent', null);
+
+    // Bind event handler for incoming messages
+    socket.on('MessageSentEvent', function(chatData){
+        console.log(`Received new chat message`);
+        socket.broadcast.emit(`MessageReceivedEvent`, chatData);
+    });
 });
 
-// setting up Socket.io server
-chatServer.listen(server);
+server.listen(8000);

@@ -1,40 +1,22 @@
-var http = require('http');
-var url = require('url');
-var fs = require('fs');
+import { Socket } from 'dgram';
+import { createServer } from 'http';
+import { Server }  from 'socket.io';
 
-// create server 
-var server = http.createServer(function(req, res){
-    var parsedUrl = url.parse(req.url,true);
-    switch (parsedUrl.pathname) {
-        case '/':
-        fs.readFile('index.html', function(err, content){
-            if(err) {
-                res.writeHead(500);
-                res.end();
-            } else {
-                res.writeHead(200, { 'Content-Type': 'text/html'});
-                res.end(content, 'utf-8');
-            }
-        });
-        break;
+const httpServer = createServer();
+
+const io = new Server(httpServer, {
+    cors: {
+        origin: process.env.NODE_ENV === "production" ? false :["http://localhost:5500"]
     }
-});
+})
 
-// connect the websocket handler to our server
-var websocket = require('socket.io')(server);
+io.on('connection', socket => {
+    console.log(`User ${socket.id} connected`)
 
-// handler creation for incoming websocket connections
-websocket.on('UserConnectedEvent', function(socket){
-    console.log('New user connected');
+    socket.on('message', data => {
+        console.log(data)
+        io.emit('message', `${socket.id.substring(0,7)}: ${data}`)
+    })
+})
 
-    // inform other users of  new user connected
-    socket.broadcast.emit('UserConnectedEvent', null);
-
-    // Bind event handler for incoming messages
-    socket.on('MessageSentEvent', function(chatData){
-        console.log(`Received new chat message`);
-        socket.broadcast.emit(`MessageReceivedEvent`, chatData);
-    });
-});
-
-server.listen(8000);
+httpServer.listen(3500, () => console.log(`listening on port 3500`))

@@ -6,7 +6,7 @@ export const postRequest = async(url, body) => {
     const response = await fetch(url,{
         method: "POST",
         headers: {
-            "Content-Type": "application/jsoon"
+            "Content-Type": "application/json",
         },
         body
 

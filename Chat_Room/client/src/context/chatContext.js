@@ -1,7 +1,7 @@
 import { createContext, useCallback, useEffect, useState } from 'react';
 import { baseUrl, getRequest , postRequest} from '../utils/services';
 import { send } from 'vite';
-
+import { io } from 'socket.io';
 export const ChatContext = createContext();
 
 export const ChatContextProvider =({ children, user}) => {
@@ -14,7 +14,6 @@ export const ChatContextProvider =({ children, user}) => {
     const [ isMessageLoading, setMessageisLoading ] = useState(false);
     const [messagesError, setMessagesError] = useState(null);
     const [ sendTextMessageError, setSendTextMessageError ] = useState(null);
-
     const [ newMessage, setNewMessage] = useState(null);
 
     useEffect( () => {

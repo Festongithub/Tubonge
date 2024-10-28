@@ -81,7 +81,9 @@ export const ChatContextProvider =({ children, user}) => {
     }, [user]);
 
 
+const sendTextMessage = useCallback((textMessage, sender, currentC) =>{
 
+})
 const updateCurrentChat = useCallback((chat) => {
     setCurrentChat(chat)
 }, []);
@@ -111,8 +113,7 @@ const creatChat = useCallback( async(firstId, secondId) => {
         messages,
         isMessageLoading,
         messagesError
-    }}
-    >{children}
+    }}>{children}
     </ChatContext.Provider>
     );
 

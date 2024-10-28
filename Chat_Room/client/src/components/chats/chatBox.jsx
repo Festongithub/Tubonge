@@ -23,9 +23,18 @@ const ChatBox = () => {
         </div>
         <Stack gap={3} className="messages">
             {messages && messages.map((message, index) => 
-            <Stack key={index}>
+            <Stack 
+            key={index} 
+            className={`${message.senderId === user?._id ?
+                "message self align-self-end flex-grow-0"
+                : "message alogn-self-start flex-grow-0"
+            }`}
+                >
                 <span>{message.text}</span>
-                <span>{moment(message.createdAt).calendar}</span>
+                <span>
+                    {moment(message.createdAt).calendar}
+                </span>
+
         </Stack>)}
     </Stack>
     </Stack>

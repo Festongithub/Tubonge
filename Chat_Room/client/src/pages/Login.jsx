@@ -34,7 +34,7 @@ const Login = () => {
                 }
                 />
                 <Button variant="primary" type="submit">
-                    Login
+                    {isloginLoading?"Getting you in ...": "Login"}
                 </Button>
                 { loginError?.error &&
                  <Alert variant="danger">

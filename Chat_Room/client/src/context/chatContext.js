@@ -85,11 +85,11 @@ export const ChatContextProvider =({ children, user}) => {
     }, [user]);
 
 
-const sendTextMessage = useCallback(async (textMessage, sender, currentChatId, setTextMessage) => {
+const sendTextMessage = useCallback(async (textMessage, sender, currentChat, setTextMessage) => {
     if(!textMessage) return console.log("Type somethings")
 
     const response = await postRequest(`${baseUrl}/messages`, JSON.stringify({
-        chatId: currentChatId,
+        chatId: currentChat,
         senderId: sender._id,
         text: textMessage
     })

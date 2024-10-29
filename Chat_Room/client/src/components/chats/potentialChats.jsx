@@ -4,8 +4,7 @@ import { AuthContext } from "../../context/AuthContext"
 
 const PotentialChats = () => {
     const {user} = useContext(AuthContext);
-
-    const {potentialChats, creatChat } = useState(ChatContext)
+    const {potentialChats, creatChat, onlineUsers } = useState(ChatContext)
     console.log("PotentialChats", potentialChats)
     return (<>
     <div className="all-users" key ={index}
@@ -15,7 +14,11 @@ const PotentialChats = () => {
             return (
             <div className="single-user" key={index}>
                 {u.name}
-                <span class="user-online"></span>
+                <span class={
+                    onlineUsers?.some((user) => 
+                    user?.userId === u?._id  ) 
+                    ? "user-online": ""}>
+                    </span>
                 </div>
             );
         })}
@@ -23,4 +26,4 @@ const PotentialChats = () => {
     </>)
 };
 
-module.exports = PotentialChats;
+export default PotentialChats;

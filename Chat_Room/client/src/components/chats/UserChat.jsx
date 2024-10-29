@@ -1,8 +1,11 @@
+import { ChatContext } from "../../context/chatContext";
 import { useFetchRecipientUser } from "../../hooks/useFetchRecipient";
 
 const UserChat = ({chat, user}) => {
     const  { recipientUser } = useFetchRecipientUser(chat, user)
+    const { onlineUsers } = useConetext(ChatContext);
 
+    const isOnline = onlineUsers?.some((user) =>  user?.userId === recipientUser?._id)
     console.log(recipientUser);
     return <Stack direction="horizontal" gap={3} className="user-card align-items-center p-1 justify-content-between"
     >
@@ -20,7 +23,7 @@ const UserChat = ({chat, user}) => {
                 7/11/2024
             </div>
             <div className="this-user-notifications">2</div>
-            <span className="user-online"></span>
+            <span className={isOnline ? "user-online": ""}></span>
         </div>
     </Stack>;
 }

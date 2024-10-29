@@ -2,11 +2,12 @@ import { useContext, useState } from "react";
 import { ChatContext } from '../../context/chatContext'
 import { AuthContext } from "../../context/AuthContext";
 import { unreadNotificationsFunc } from "../../utils/unreadNotifications";
+import moment from "moment";
 const Notification = () => {
 
     const [ isOpen, setIsopen ] = useState(false);
     const { user} = useContext(AuthContext);
-    const { notifications, userChats, allUsers} = useContext(ChatContext);
+    const { notifications, userChats, allUsers, markNotificationsAsRead} = useContext(ChatContext);
 
     const unreadNotifications = unreadNotificationsFunc(notifications);
     const modifiedNotifications = notifications.map((n) =>{
@@ -41,9 +42,21 @@ const Notification = () => {
         { isOpen ? <div className="notification-box">
             <div className="notification-header">
                 <h3>Notifications</h3>
-                <div className="mark-as-read">
+                <div className="mark-as-read" onClick={() => markNotificationsAsRead(notifications)}>
                     Mark all as read
                 </div>
+                {modifiedNotifications?.length === 0 ? <span className="notification">
+                    No Notifications yet..
+                </span>: null }
+                {modifiedNotifications && modifiedNotifications.map((n, index) =>{
+                    return <div key={index} className={n.isRead ? "notification": "notification not-read"}> 
+
+                    <span>{`${n.senderName} sent you a new message`}</span>
+                    <span className="notification-time">
+                        {moment(n.data).calendar()}
+                        </span>
+                    </div>
+                })}
             </div>
 
         </div> : null }

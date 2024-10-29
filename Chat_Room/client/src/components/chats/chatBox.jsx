@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { ChatContext } from "../../context/chatContext";
 import { useFetchRecipientUser } from "../../hooks/useFetchRecipient";
@@ -11,8 +11,16 @@ const ChatBox =()=> {
     const {curentChat, messages, isMessageLoading, sendTextMessage } = useContext(ChatContext);
     const { recipientUser } = useFetchRecipientUser(curentChat, user)
     const [textMessage, setTextMessage ] = useState("")
-    
+    const scroll = useRef();
+
+
     console.log(`text`, textMessage);
+
+    useEffect(() => {
+        scroll.current?.scrollIntoview({behavior: "smooth"})
+
+    }, [messages])
+    
     if(!recipientUser) return(
         <p style={{textAlign:"center", width:"100%"}}>
         Loading Chat...
@@ -30,7 +38,9 @@ const ChatBox =()=> {
             className={`${message.senderId === user?._id ?
                 "message self align-self-end flex-grow-0"
                 :"message alogn-self-start flex-grow-0"
-            }`} >
+            }`}
+            ref = {scroll} 
+            >
                 <span>{message.text}</span>
                 <span>
                     {moment(message.createdAt).calendar()}

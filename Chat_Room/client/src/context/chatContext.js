@@ -2,9 +2,10 @@ import { createContext, useCallback, useEffect, useState } from 'react';
 import { baseUrl, getRequest , postRequest} from '../utils/services';
 import { send } from 'vite';
 import { io } from 'socket.io-client';
+
 export const ChatContext = createContext();
 
-export const ChatContextProvider =({ children, user}) => {
+export const ChatContextProvider = ({ children, user}) => {
     const [ userChats, setUserChats] = useState(null);
     const [isUserChatsLoading, setIsUserChatsLoading ] = useState(false);
     const [ userChatsError, setUserChatsError] = useState(null);
@@ -17,8 +18,10 @@ export const ChatContextProvider =({ children, user}) => {
     const [ newMessage, setNewMessage] = useState(null);
     const [ socket, setSocket ] = useState(null);
     const [ onlineUsers, setOnlineUsers ] = useState([]);
+    const  [ notifications, setNotifications ] = useState([]);
 
-    useEffect(() => {
+    console.log("notifications", notifications);
+        useEffect(() => {
         const newSocket = io("http://localhost:3000");
         setSocket(newSocket);
 
@@ -50,19 +53,31 @@ export const ChatContextProvider =({ children, user}) => {
         socket.emit("sendMessage", {...newMessage, recipientId})
     }, [newMessage]);
 
-    // receive message
+    // receive message and notifications
     useEffect(() => {
         if(socket === nulll) return;
 
         socket.on("getMessage", res =>{
-            if(currentChat?._id ===res.chatId) return;
+            if(currentChat?._id !== res.chatId) return;
             {
                 setMessages((prev) => [...prev]);
             }
+        });
+
+        socket.on("getNotifications", (res) =>{
+            const isChatOpen = currentChat?.members.some(id => id === res.senderId)
+
+            if(isChatOpen) {
+                setNotifications(prev => [{...res, isRead: true}, ...prev])
+            } else {
+                setNotifications(prev => [res, ...prev]);
+            }
         })
         return () =>{
-            socket.off("getMessage")
-        }
+            socket.off("getMessage");
+            socket.off("getNotification");
+        };
+
     }, [socket, currentChat]);
 
 
@@ -172,21 +187,24 @@ const creatChat = useCallback( async(firstId, secondId) => {
     }, []);
     
     return (
-    <ChatContext.Provider 
-    value={{
-        userChats,
-        isUserChatsLoading,
-        userChatsError,
-        potentialChats,
-        creatChat,
-        updateCurrentChat,
-        messages,
-        isMessageLoading,
-        messagesError
-    }}
-    >
-        {children}
-    </ChatContext.Provider>
+        <ChatContext.Provider
+        value={{
+            userChats,
+            isUserChatsLoading,
+            userChatsError,
+            potentialChats,
+            creatChat,
+            updateCurrentChat,
+            messages,
+            isMessageLoading,
+            messagesError,
+            sendTextMessage,
+            onlineUsers,
+            notifications
+        }}
+        >
+            {children}
+        </ChatContext.Provider>
     );
 
 };

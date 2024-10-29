@@ -188,13 +188,35 @@ const creatChat = useCallback( async(firstId, secondId) => {
             ...prev, response});
     }, []);
     
-    const markNotificationsAsRead = useCallback((notifications) => {
+    const markAllNotificationsAsRead = useCallback((notifications) => {
         const  eNotifications  = notifications.map((n)=> {
             return {...n, isRead: true};
         });
 
         setNotifications(eNotifications)
-    },[])
+    },[]);
+
+    const markNotificationsAsRead = useCallback((n, userChats, user, notifications) =>{
+        // find chat to open
+
+        const desiredChat = userChats.find(chat => {
+            const chatMembers = [user._id, n.senderId];
+            const isDessiredChat = chat?.members.every((member) =>{
+                return  chatMembers.includes(member);
+            });
+            return isDessiredChat;
+        });
+        // mark now notification as read
+        const  eNotifications = notifications.map(el =>{
+            if(n.secondId === el.senderId) {
+                return {...n, isRead:true}
+            } else {
+                return el
+            }
+        })
+        updateCurrentChat(desiredChat);
+        setNotifications(eNotifications);
+    })
     return (
         <ChatContext.Provider
         value={{
@@ -211,7 +233,8 @@ const creatChat = useCallback( async(firstId, secondId) => {
             onlineUsers,
             notifications,
             allUsers,
-            markNotificationsAsRead
+            markAllNotificationsAsRead,
+            markNotificationsAsRead,
         }}
         >
             {children}
@@ -219,3 +242,4 @@ const creatChat = useCallback( async(firstId, secondId) => {
     );
 
 };
+

@@ -216,7 +216,28 @@ const creatChat = useCallback( async(firstId, secondId) => {
         })
         updateCurrentChat(desiredChat);
         setNotifications(eNotifications);
-    })
+    },
+    []
+    );
+
+    const markthisUserNotificationsAsRead = useCallback((thisUserNotification, notifications) => {
+
+        const eNotifications = notifications.map(el =>{
+            let notification;
+
+            thisUserNotification.forEach(n => {
+                if(n.sender === el.secondId){
+                    notification = {...n, isRead:true}
+                }else{
+                    notification = el
+                }
+        })
+        return notification
+        })
+        setNotifications(eNotifications)
+    }, [])
+
+
     return (
         <ChatContext.Provider
         value={{
@@ -235,6 +256,7 @@ const creatChat = useCallback( async(firstId, secondId) => {
             allUsers,
             markAllNotificationsAsRead,
             markNotificationsAsRead,
+            markthisUserNotificationsAsRead 
         }}
         >
             {children}

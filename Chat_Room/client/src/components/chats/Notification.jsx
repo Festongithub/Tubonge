@@ -69,10 +69,10 @@ const Notification = () => {
                         )
                 })}
             </div>
-        </div> : null 
+        </div> : null }
         
     </div>
-    );
+    )
 }
 
 export default Notification;

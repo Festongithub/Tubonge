@@ -19,6 +19,7 @@ export const ChatContextProvider = ({ children, user}) => {
     const [ socket, setSocket ] = useState(null);
     const [ onlineUsers, setOnlineUsers ] = useState([]);
     const  [ notifications, setNotifications ] = useState([]);
+    const [ allUsers, setallUsers ] = useState([]);
 
     console.log("notifications", notifications);
         useEffect(() => {
@@ -104,7 +105,8 @@ export const ChatContextProvider = ({ children, user}) => {
 
              return !isChatCreated;
         });
-        setPotentialChats(pChats)
+        setPotentialChats(pChats);
+        setallUsers(response);
     };
     getUser();
 }, [userChats]);
@@ -200,7 +202,8 @@ const creatChat = useCallback( async(firstId, secondId) => {
             messagesError,
             sendTextMessage,
             onlineUsers,
-            notifications
+            notifications,
+            allUsers,
         }}
         >
             {children}

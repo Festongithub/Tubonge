@@ -3,15 +3,16 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const user = require("./models/user.model");
 const router = require("./Routes/userRoutes");
-
-
-
+const roomRoutes = require("./Routes/roomRoutes");
+const messageRoutes = require('./Routes/messageRoute')
 
 const app  = express();
 app.use(express.json());
 app.use(cors());
 
-app.use("/api/users", router);
+app.use("/api/users", user);
+app.use("/api/rooms", roomRoutes);
+app.use('/api/message', messageRoutes);
 
 require("dotenv").config();
 

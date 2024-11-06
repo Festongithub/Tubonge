@@ -1,4 +1,5 @@
 const messageModel = require('../models/messageModel');
+const { publisher } = require('../Client');
 
 // createMessage
 
@@ -10,15 +11,21 @@ const createMessage = async(req, res) => {
     }
     try 
     {
-        const message = new messageModel({
-            chatId, senderId, text
-            })
-        
+        const message = new messageModel({ chatId, senderId, text});
         const response = await message.save()
-        res.status(200).json(repsonse)
+
+        const messageData = {
+            chatId,
+            senderId,
+            text,
+            createdAt: response.createdAt
+        };
+        publisher.publish(chatId, JSON.stringify(messageData));
+
+        res.status(200).json({ message: "Message sent successfully", data:response });
     }catch(error){
 	console.log(error);
-	res.status(500).json(error);
+	res.status(500).json({error: "Failed to send message" });
     }
 }
 // getmessages

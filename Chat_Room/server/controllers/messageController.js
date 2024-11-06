@@ -3,15 +3,19 @@ const messageModel = require('../models/messageModel');
 // createMessage
 
 const createMessage = async(req, res) => {
-    const { chatId, senderId, text} = req.body
+    const { chatId, senderId, text} = req.body;
 
-    const message = new messageModel({
-	chatId, senderId, text
-    })
-
-    try {
-	const response = await message.save()
-	res.status(200).json(repsonse)
+    if(!chatId || !senderId || !text ){
+        return res.status(400).json({error: "chatId, senderId, and text required"})
+    }
+    try 
+    {
+        const message = new messageModel({
+            chatId, senderId, text
+            })
+        
+        const response = await message.save()
+        res.status(200).json(repsonse)
     }catch(error){
 	console.log(error);
 	res.status(500).json(error);

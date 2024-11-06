@@ -32,28 +32,48 @@ const createRoom = async(req, res) => {
 }
 
 // Join A room
-const joinRoom = async(req, res) =>{
+const joinRoom = async(req, res) => {
     const { roomId, userId } = req.body;
 
     try{
-        const room = await Room.findOne({roomId});
-
+        const room = await Room.findOne({ roomId });
         if(!room){
-            return res.status(404).json({error: "Room not found"});
+            return res.status(404).json({error:'Room not found'});
         }
 
         if(room.members.includes(userId)){
-            return res.status(400).json({
-                error: "User is in the room already find another one"
-            })
+            return res.status(400).json({ error: "user is already in the room"})
+        }
 
-        // add new user to the members array
         room.members.push(userId);
         await room.save();
-        } catch(error){
-            
+
+        return res.status(200).json({message: "User added to room", room});
+    } catch(error){
+        return res.status(500).json({error: "server error"});
+    }
+};
+
+const leaveRoom = async(req, res) => {
+    const { roomId, userId } = req.body;
+
+    try {
+        const room = await Room.findOne({ roomId });
+        if(!room){
+            return res.status(404).json({error:'Room not found'});
         }
+
+        if(room.members.includes(userId)){
+            return res.status(400).json({ error: "user is already in the room"})
+        }
+
+        // remove the user from members
+        room.members = room.members.filter(member => member.toString() !== userId)
+        await room.save();
+        res.status(200).json({ message: 'User removed from room', room});
+    }
+    catch(error){
+        return res.status(500).json({error: "server error"});
     }
 }
-
-module.exports = { createRoom }
+module.exports = { createRoom, joinRoom, leaveRoom}

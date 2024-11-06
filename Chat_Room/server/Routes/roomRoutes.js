@@ -1,7 +1,9 @@
 const expres = require('express');
 const router = express.Router();
-const roomController = require("../controllers/roomControllers");
+const  { createRoom, joinRoom, leaveRoom} = require("../controllers/roomControllers");
 
-router.post('/api/rooms', roomController.createRoom);
+router.post('/create',createRoom);
+router.post('/join',joinRoom);
+router.post('/leave',leaveRoom);
 
 module.exports = router;

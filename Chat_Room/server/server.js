@@ -12,7 +12,7 @@ app.use(cors());
 
 app.use("/api/users", user);
 app.use("/api/rooms", roomRoutes);
-app.use('/api/message', messageRoutes);
+app.use('/api/messages', messageRoutes);
 
 require("dotenv").config();
 

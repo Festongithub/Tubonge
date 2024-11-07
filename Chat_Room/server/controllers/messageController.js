@@ -30,17 +30,15 @@ const createMessage = async(req, res) => {
 }
 // getmessages
 
-const getMessage = async(req, res) =>{
-    const {chatId} = req.params;
+const getMessage = async(req, res) => {
 
-    try {
-	const messages = await messageModel.find({chatId})
-	res.status(200).json(repsonse)
-
-    }catch(error){
-	console.log(error);
-	res.status(500).json(error);
-    }
+	try{
+		const messages = await messageModel.find();
+		return res.status(200).json(messages)
+	} catch(error) {
+		console.log(error);
+		return res.status(500).json(error);
+	}
 }
 
 module.exports = {createMessage, getMessage};

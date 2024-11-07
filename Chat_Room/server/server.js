@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const user = require("./models/user.model");
 const router = require("./Routes/userRoutes");
 const roomRoutes = require("./Routes/roomRoutes");
+const chatRoutes = require('./Routes/chatRoute');
 const messageRoutes = require('./Routes/messageRoute')
 const socketIO = require('socket.io');
 
@@ -18,9 +19,10 @@ const io = socketIO(server);
 app.use(express.json());
 app.use(cors());
 
-app.use("/api/users", user);
-app.use("/api/rooms", roomRoutes);
+app.use('/api/users', router);
+app.use('/api/rooms', roomRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/chats', chatRoutes);
 
 require("dotenv").config();
 
@@ -28,7 +30,7 @@ const port = process.env.PORT || 5000;
 
 const uri = process.env.MONGO_URI;
 
-app.get("/", router);
+app.use("/", router);
 
 
 io.on('connection', (socket) =>{

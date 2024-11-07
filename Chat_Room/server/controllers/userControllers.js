@@ -80,7 +80,6 @@ const findUser = async(req, res) => {
 
 // getUser
 const getUsers = async(req, res) => {
-    const userId = req.params.userId;
     try {
         const users = await userModel.find();
         res.status(200).json(users);

@@ -2,7 +2,7 @@
 const chatModel = require('../models/chatModel');
 
 const createChat = async(req, res) => {
-	const { firstId, secondiId } = req.body
+	const { firstId, secondId } = req.body
 
 	try {
 		const chat = await chatModel.findOne({

@@ -9,7 +9,7 @@ const createRoom = async(req, res) => {
         const { roomName, isPrivate, members } = req.body;
 
         if(!roomName){
-            return res.status(400).json({ error: "Room name is required"});
+            return res.status(400).json({ error: "Room parameter required"});
         }
 
         const Roomexists = await Room.findOne({ roomName});
@@ -76,4 +76,27 @@ const leaveRoom = async(req, res) => {
         return res.status(500).json({error: "server error"});
     }
 }
-module.exports = { createRoom, joinRoom, leaveRoom}
+
+const roomFinding = async(req, res) => {
+	const { roomId, roomName} = req.query;
+
+	try{
+		let room;
+
+		if(roomId) {
+			room = await Room.findOne({ roomId });
+		}else {
+			return res.status(400).json({ error: "roomId or roomName is required"});
+		}
+
+		if(!room) {
+			return res.status(404).json({error: "Room not found"});
+		}
+
+		res.status(200).json({ room});
+	} catch(error) {
+		console.error("Error in findRoom:", error);
+		res.status(500).json({error: "Failed to retrieve room"});
+	}
+}
+module.exports = { createRoom, joinRoom, leaveRoom, roomFinding}

@@ -89,5 +89,65 @@ const getUsers = async(req, res) => {
     }
 };
 
+// photo and video uploads
 
-module.exports = {registerUser, loginUser, findUser, getUsers};
+const bioUpdate = async(req, res) => {
+    const { userBio } = req.body;
+    const userId = req.params.userId;
+
+    try{
+        const user = userModel.findByIdAndUpdate(userId, {bio}, {new: true})
+        res.status(200).json({ message: "Bio updated successfully", user})
+    }catch(error){
+        res.status(500).json({error: "Failed to upadte bio"});
+    }
+};
+
+const photoUpload = async(req, res) => {
+    const userId = req.params.userId;
+
+    if(!req.files){
+        return res.status(400).json({error: "Too big, photo upload failed"});
+    }
+
+    try{
+        const user = await userModel.findByIdAndUpdate(
+            userId,
+            {
+                photo: req.file.path
+            },
+            {
+                new: true
+            }
+        )
+        res.status(200).json({error: "Photo uploaded successfully", user})
+    }catch(error){
+        res.status(500).json({error: "Failed to upload "})
+    }
+};
+
+const videoUpload = async(req, res) => {
+    const userId = req.params.userId;
+
+    if(!req.files || req.files.length === 0){
+        return res.status(400).json({
+            error: "video upload failed"
+        })
+    }
+
+    try{
+        const videoPath = req.files.map(file => file.path);
+        const user = await userModel.findByIdAndUpdate(
+            userId,
+            {$push: { videos: {$each: videoPaths}}},
+            { new: true }
+
+        );
+        res.status(200).json({error: "Video uploaded successfully", user})
+    }catch(error){
+        res.status(500).json({error: "Failed to upload videos"})
+    }
+}
+
+
+module.exports = {registerUser, loginUser, findUser, getUsers, bioUpdate, photoUpload, videoUpload};

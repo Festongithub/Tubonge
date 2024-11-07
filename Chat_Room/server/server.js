@@ -11,6 +11,7 @@ const socketIO = require('socket.io');
 
 const { RoomSubsribers } = require('./controllers/subscribeController');
 const { subscriber } = require("./Client");
+const { TokenExpiredError } = require("jsonwebtoken");
 const app  = express();
 const server = http.createServer(app);
 const io = socketIO(server);
@@ -19,11 +20,13 @@ const io = socketIO(server);
 app.use(express.json());
 app.use(cors());
 
+// middleware
 app.use('/api/users', router);
 app.use('/api/rooms', roomRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/chats', chatRoutes);
 
+app.use('/api/uploads', express.static('/api/uploads'))
 require("dotenv").config();
 
 const port = process.env.PORT || 5000;

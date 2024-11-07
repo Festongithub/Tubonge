@@ -1,3 +1,7 @@
 MONGO_URI
+
 node_modules
+
 .env
+
+*.swp
